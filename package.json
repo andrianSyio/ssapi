@@ -9,6 +9,5 @@
   "dependencies": {
     "playwright-aws-lambda": "^0.10.0",
     "playwright-core": "^1.44.1" 
-    /* Gunakan Playwright-core karena lebih ringan. Versi dapat disesuaikan. */
   }
 }
