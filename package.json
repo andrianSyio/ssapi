@@ -1,0 +1,14 @@
+{
+  "name": "vercel-screenshot-api",
+  "version": "1.0.0",
+  "description": "API Screenshot Web dengan Playwright di Vercel",
+  "main": "api/screenshot.js",
+  "scripts": {
+    "start": "node api/screenshot.js"
+  },
+  "dependencies": {
+    "playwright-aws-lambda": "^0.10.0",
+    "playwright-core": "^1.44.1" 
+    /* Gunakan Playwright-core karena lebih ringan. Versi dapat disesuaikan. */
+  }
+}
