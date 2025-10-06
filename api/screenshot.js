@@ -1,7 +1,11 @@
 // File: api/screenshot.js
 
+// Import library yang diperlukan:
 const { chromium } = require('playwright-core');
-const { getExecutablePath } = require('playwright-aws-lambda'); 
+
+// PERBAIKAN: Import 'playwright-aws-lambda' sebagai objek default (misalnya 'playwrightLambda')
+// dan akses fungsinya dari objek tersebut.
+const playwrightLambda = require('playwright-aws-lambda');
 
 // Handler utama untuk Vercel Serverless Function
 module.exports = async (req, res) => {
@@ -18,9 +22,10 @@ module.exports = async (req, res) => {
     let screenshot;
 
     try {
-        const executablePath = await getExecutablePath();
+        // 1. Panggil fungsi getExecutablePath melalui objek playwrightLambda
+        const executablePath = await playwrightLambda.getExecutablePath();
 
-        // **PERBAIKAN STABILITAS:** Menambahkan argumen wajib untuk lingkungan Lambda
+        // 2. Luncurkan browser Chromium
         browser = await chromium.launch({
             executablePath,
             // Argumen ini sangat penting untuk kompatibilitas lingkungan Serverless
@@ -35,13 +40,10 @@ module.exports = async (req, res) => {
         });
 
         const page = await browser.newPage();
-        
-        // Mengatur resolusi layar simulasi
         await page.setViewportSize({ width: 1280, height: 720 });
 
         // Navigasi ke URL
         await page.goto(targetUrl, {
-             // Tingkatkan timeout menjadi 15 detik
              waitUntil: 'networkidle', 
              timeout: 15000 
         });
@@ -52,15 +54,12 @@ module.exports = async (req, res) => {
             fullPage: true
         });
 
-        // Kirim screenshot sebagai respons sukses (200 OK)
         res.status(200).send(screenshot);
 
     } catch (error) {
-        // Tangani error, misalnya jika navigasi gagal atau error Playwright lainnya
         console.error('Error saat mengambil screenshot:', error);
         res.status(500).send(`Gagal mengambil screenshot: Pastikan URL valid. Detail Error: ${error.message}`);
     } finally {
-        // Pastikan browser ditutup untuk membebaskan sumber daya Vercel/Lambda
         if (browser) {
             await browser.close();
         }
